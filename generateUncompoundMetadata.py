@@ -18,7 +18,7 @@ import contentdm_api, os, sys, re
 # Spring '17
 
 # change your collection name here
-COLLECTION_NAME = ""
+COLLECTION_NAME = "filmarch"
 
 # asks for a file directory name to save the new metadata for the uncompound
 # item, and then for the ContentDM numbers of the files to be uncompounded.
@@ -37,7 +37,7 @@ def main():
     print 'containing the metadata merged from all of the items inside the compound object'
 
     files = int(raw_input("How many files are you processing today? "))
-    for each in range(0, files + 1):
+    for each in range(0, files):
         fileName = str(raw_input("Type a filename for the new merged item: "))
         print ""
         mergedFileName = os.path.join('./', fileName)
