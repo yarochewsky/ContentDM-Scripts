@@ -67,7 +67,7 @@ def main():
         gatherItemInfo(objs, mergedFileName)
         print 'Done! You are now ready to uncompound! Good luck, son'
         print "\n"
-    print "Bye... Thanks for using this software to make you collection a better place!"
+    print "Bye... Thanks for using this software to make your collection a better place!"
 
 # given an item number and a file path of the directory, saves the thumbnail
 # for the file number into the working directory
