@@ -270,7 +270,9 @@ def reportField(collection, fieldName):
 # preserving csv format
 def writeCsv2File(collection, filename):
     colkeys = collection.keys()
-    writeStream = csv.writer(open(filename, 'w'), quoting=csv.QUOTE_MINIMAL, delimiter='\t')
+    writeStream = csv.writer(open(filename, 'w'), quoting=csv.QUOTE_MINIMAL, delimiter=',')
+    # for num in (1, len(colkeys)):
+    #     writeStream.writerow("\t" + colkeys[num])
     writeStream.writerow(colkeys)
     defaultColumnLength = len(collection[colkeys[0]])
     for num in range(0, defaultColumnLength):
@@ -332,11 +334,10 @@ def writeModifiedFieldsData(collectionName, collection, fileName):
         for num in range(0, defaultColumnLength):
             line = collection['CONTENTdm number'][num] + ","
             line += fieldsNickNameDict[each] + ","
-            line += collection[each][num]
             try:
-                line = unicode(line, 'utf-8', errors='ignore')
-            except TypeError:
-                return line
+                line += collection[each][num]
+            except:
+                line += unicode(collection[each][num], errors='replace')
             writeStream.write(line + "\n")
 
 # given a collection, an old and a new field name, copies the content from the old field,
