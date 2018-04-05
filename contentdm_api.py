@@ -15,9 +15,9 @@ URL_SITE="https://cdm16786.contentdm.oclc.org/utils/"
 # url to download export file
 SERVER_DOWNLOAD_COLLECTION = "https://server16786.contentdm.oclc.org/cgi-bin/admin/getfile.exe?CISOMODE=1&CISOFILE="
 # server username
-USERNAME = 'diginiti'
+USERNAME = 
 # server PASSWORD
-PASSWORD = 'divas.at.work'
+PASSWORD =
 
 # returns a list of all collections in the server
 def getCollectionList(formatType="json"):
