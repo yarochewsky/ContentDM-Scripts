@@ -15,7 +15,7 @@ from os.path import basename
 
 STANDARD_RESTRICTIONS_STRING = ('For information on permissions for use and reproductions please' +
                                 'visit UW Libraries Special Collections Use Permissions page:' +
-                                '<br> http://www.lib.washington.edu/specialcollections/services/' +
+                                'http://www.lib.washington.edu/specialcollections/services/' +
                                 'permission-for-use')
 COPYRIGHT_NOT_EVALUATED = 'http://rightsstatements.org/vocab/CNE/1.0/'
 IN_COPYRIGHT = 'http://rightsstatements.org/vocab/InC/1.0/'
@@ -320,25 +320,34 @@ def checkColConsistency(collection):
 # fields in the collection.
 def writeModifiedFieldsData(collectionName, collection, fileName):
     print bcolors.OKBLUE + "Generating metadata file " + fileName + " ..."
-    lookForFields = ['Type-DCMI', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
+    lookForFields = ['Date-EDTF', 'Type-DCMI', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
     fieldsMetadata = contentdm_api.getCollectionFieldInfo(collectionName)
-    fieldsNickNameDict = dict()
+    fieldsNickNameDict = collections.OrderedDict()
     for each in lookForFields:
         for field in fieldsMetadata:
             if each == field['name']:
                 fieldsNickNameDict[each] = field['nick']
     colkeys = collection.keys()
-    defaultColumnLength = len(collection[colkeys[0]])
-    writeStream = open(fileName, 'w')
-    for each in lookForFields:
-        for num in range(0, defaultColumnLength):
-            line = collection['CONTENTdm number'][num] + ","
-            line += fieldsNickNameDict[each] + ","
+    defaultColumnLength = len(collection[colkeys[0]]) # number of records for that collection
+    writeStream = csv.writer(open(fileName, 'w'), quoting=csv.QUOTE_MINIMAL, delimiter=",")
+
+    # first, we need to write the header to the file.
+    # header = record number, (n1, n2, ...), for n1, n2, ... the modified fields' nicknames
+    header = ["record number"]
+    for fieldnickname in fieldsNickNameDict.values():
+        header.append(fieldnickname)
+    writeStream.writerow(header)
+
+    # now write the values
+    for num in range (0, defaultColumnLength):
+        line = [collection['CONTENTdm number'][num]]
+        for field in lookForFields:
+            fieldnickname = fieldsNickNameDict[field]
             try:
-                line += collection[each][num]
+                line.append(collection[field][num])
             except:
-                line += unicode(collection[each][num], errors='replace')
-            writeStream.write(line + "\n")
+                line.append(unicode(collection[field][num], errors='replace'))
+        writeStream.writerow(line)
 
 # given a collection, an old and a new field name, copies the content from the old field,
 # and creates a new field with the cotnents of the old field in it. Then, removes the
@@ -351,6 +360,7 @@ def changeFieldname(collection, old, new):
     del collection[old]
 
 def main():
+
     mappedDict = dict()
     allColsList = contentdm_api.getCollectionList()
     for each in allColsList:
@@ -358,8 +368,7 @@ def main():
         name = each['name']
         mappedDict[alias] = name
 
-    requiredFields = ['Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
-
+    requiredFields = ['Date-EDTF', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
 
     for eachFile in os.listdir("./text"):
         if eachFile.endswith(".txt"):
@@ -389,6 +398,53 @@ def main():
             else:
                 print bcolors.FAIL + " check manually."
             print "\n"
+
+
+    # --------- HERE --------
+
+    # collectionsAnneWants = []
+    # with open("collections-for-daniel-to-update.txt", 'r') as f:
+    #     for line in f:
+    #         collectionsAnneWants.append(line.strip())
+    #
+    # mappedDict = dict()
+    # allColsList = contentdm_api.getCollectionList()
+    # for each in allColsList:
+    #     alias = each['alias'].split('/')[1]
+    #     name = each['name']
+    #     mappedDict[alias] = name
+    #
+    # requiredFields = ['Date-EDTF', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
+    #
+    # for eachFile in os.listdir("./text"):
+    #     if eachFile.endswith(".txt"):
+    #         colName = eachFile.split('.')[0]
+    #         if mappedDict[colName] in collectionsAnneWants:
+    #             print bcolors.OKBLUE + "Processing " + eachFile + " ..."
+    #             fullFileName = os.path.join("./text", eachFile)
+    #             col = mapDataToCollection(fullFileName)
+    #             consistent = checkColConsistency(col)
+    #             if consistent:
+    #                 colkeys = col.keys()
+    #                 for each in requiredFields:
+    #                     if each not in colkeys:
+    #                         addFieldToCol(col, each)
+    #                 if 'Type' in colkeys:
+    #                     changeFieldname(col, 'Type', 'Type-DCMI')
+    #                 else:
+    #                     addFieldToCol(col, 'Type-DCMI')
+    #
+    #                 normalizeType(col)
+    #                 fixObjectType(col)
+    #                 fixRestrictions(col)
+    #                 fixDigitalCollection(col, mappedDict[alias])
+    #                 fixRightsURI(col)
+    #                 exportFileName = eachFile.split(".")[0] + ".csv"
+    #                 writeCsv2File(col, os.path.join("export-csv/", exportFileName))
+    #                 writeModifiedFieldsData(colName, col, os.path.join("export-csv/", colName + "-csvMetadata.csv"))
+    #             else:
+    #                 print bcolors.FAIL + " check manually."
+    #             print "\n"
 
 if __name__ == '__main__':
     main()
