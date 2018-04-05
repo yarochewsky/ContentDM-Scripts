@@ -7,8 +7,6 @@
 # on the structure of this metadata file, check the excel library (excel.py). Note that the
 # ContentDM Client cached files should be in the same directory as this module, and ALL of the
 # files that are specified in the metadata file have to be cached already.
-
-
 import csv, os, shutil
 import xml.etree.ElementTree as ET
 import collections
@@ -58,11 +56,6 @@ def updateFieldInXML(root, nickname, value):
 	findElement = root.find(nickname)
 	if findElement != None:
 		print(" Writing " + nickname + " as " + value)
-		saveOld = findElement.text
-		if saveOld == None:
-			findElement.set('old', "None")
-		else:
-			findElement.set('old', saveOld)
 		findElement.text = value
 
 # creates a backup dir to copy over the contentdm cached files .desc
@@ -75,41 +68,37 @@ def backupCachedFiles():
 			print("Copying file : " + eachFile + " to backup directory ...")
 			shutil.copy(eachFile, "./backup")
 
+# prepend xml declaration header to the file (treat XML as text, not parsed anymore)
+def prependHeader(record):
+        print(" Writing xml header to the file ...")
+        savedFileContents = []
+        with open(record + ".desc", "r") as cachedFile:
+                savedFileContents = cachedFile.read()
+        with open(record + ".desc", "w") as cachedFile:
+                cachedFile.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+                cachedFile.write(savedFileContents)
+                
 def main():
+	filename = input("Please, enter the name of the metadata file ")
+	backupCachedFiles() # backup every cached file before writing anything to the originals
+	with open(filename, 'r') as inputFile:
+		reader = list(csv.reader(inputFile, delimiter=","))
 
-	# tree = ET.parse("255.xml")
-	# for each in tree.iter():
-	# 	print each.tag
-	# 	print(ET.tostring(each))
-	content = []
-	with open("255.xml", "r") as f:
-		content = f.read()
-	with open("255.xml", "w") as f:
-		f.write("<?xml version\"1.0\" encoding=\"utf-8\"?>\n")
-		f.write(content)
-	
-
-
-	# HERE ----
-	# filename = input("Please, enter the name of the metadata file ")
-	# backupCachedFiles() # backup every cached file before writing anything to the originals
-	# with open(filename, 'r') as inputFile:
-	# 	reader = list(csv.reader(inputFile, delimiter=","))
-	#
-	# recordsDict = populateMap(reader)
-	# records = list(recordsDict.keys())
-	# for record in records:
-	# 		treeRoot = findXMLRoot(record)
-	# 		if (treeRoot != None):
-	# 			recordFields = recordsDict[record]
-	# 			print("Updating record number " + record + " ...")
-	# 			for recordFieldsNickname in list(recordFields.keys()):
-	# 				filedValueInRecord = recordFields[recordFieldsNickname]
-	# 				updateFieldInXML(treeRoot, recordFieldsNickname, filedValueInRecord)
-	# 			treeRoot.write(record + ".desc", encoding="utf-8", xml_declaration=False,
-	# 						   method="xml", short_empty_elements=False)
-	# 		else:
-	# 			print("Record file " + record + " is not cached or does not exist ...")
+	recordsDict = populateMap(reader)
+	records = list(recordsDict.keys())
+	for record in records:
+			treeRoot = findXMLRoot(record)
+			if (treeRoot != None):
+				recordFields = recordsDict[record]
+				print("Updating record number " + record + " ...")
+				for recordFieldsNickname in list(recordFields.keys()):
+					filedValueInRecord = recordFields[recordFieldsNickname]
+					updateFieldInXML(treeRoot, recordFieldsNickname, filedValueInRecord)
+				treeRoot.write(record + ".desc", encoding="utf-8", xml_declaration=False,
+							   method="xml", short_empty_elements=False)
+				prependHeader(record)
+			else:
+				print("Record file " + record + " is not cached or does not exist ...")
 
 if __name__ == '__main__':
 	main()
