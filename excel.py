@@ -403,9 +403,10 @@ def changeFieldname(collection, old, new):
     del collection[old]
 
 def main():
-    col = mapDataToCollection("text/loc.txt")
-    fieldsMetadata = contentdm_api.getCollectionFieldInfo("loc")
-    reconstructDesc(col, fieldsMetadata)
+    contentdm_api.downloadCollection("loc", "./text")
+    #col = mapDataToCollection("text/loc.txt")
+    #fieldsMetadata = contentdm_api.getCollectionFieldInfo("loc")
+    #reconstructDesc(col, fieldsMetadata)
 
     # --------- HERE --------
 

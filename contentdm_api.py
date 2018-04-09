@@ -76,6 +76,7 @@ def get(endpoint, collectionName, itemId, fileName):
 # given a collection name, and a directory, downloads the collection original file from
 # the server, and saves it in the directory as a text file with the filename = collection name
 def downloadCollection(collectionName, directory):
+    print("The downloadCollection method requires authentication : ")
     username = input("Username: ").strip()
     password = getpass.getpass()
     r = requests.get(SERVER_DOWNLOAD_COLLECTION + '/' + collectionName +
