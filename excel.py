@@ -1,12 +1,3 @@
-# coding:utf-8
-import sys
-<<<<<<< HEAD
-reload(sys)
-sys.setdefaultencoding("utf-8")
-=======
-# reload(sys)
-# sys.setdefaultencoding("utf-8")
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 # Spreadsheets editing library
 # University of Washington Digital Strategies, Winter '18
 # Daniel Fonseca Yarochewsky
@@ -16,12 +7,9 @@ from collections import deque
 import contentdm_api
 import re
 from os.path import basename
-<<<<<<< HEAD
-=======
 from xml.etree.ElementTree import Element, SubElement, Comment
 from xml.dom import minidom
 from xml.etree import ElementTree
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 
 
 STANDARD_RESTRICTIONS_STRING = ('For information on permissions for use and reproductions please' +
@@ -65,8 +53,6 @@ def mapDataToCollection(fileName):
 
     return collection
 
-<<<<<<< HEAD
-=======
 # returns a pretty-printed (indented, standard XML) XML string for the given element
 def prettify(elem):
     rough_string = ElementTree.tostring(elem, 'utf-8')
@@ -107,7 +93,6 @@ def addProjectClientBookeepingTags(root):
     for tag in tags:
         elementChild = SubElement(root, tag)
 
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 # given a collection dictionary, generates and returns a list of tab-separated strings
 # containing each row of the collection. Note that we're using \r\n as end of line, as per
 # the specification of Excel since we're converting xls spreadsheets to tab-delimited txt files,
@@ -116,11 +101,7 @@ def addProjectClientBookeepingTags(root):
 def generatePrintableCollection(collection):
     printableCol = deque([])
     row = ''
-<<<<<<< HEAD
-    colkeys = collection.keys()
-=======
     colkeys = list(collection.keys())
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     row += colkeys[0]
     for num in range(1, len(colkeys)):
         row += '\t' + colkeys[num]
@@ -143,11 +124,7 @@ def generatePrintableCollection(collection):
 # and initializes every row of that column to empty string.
 def addFieldToCol(collection, fieldName):
     collection[fieldName] = []
-<<<<<<< HEAD
-    normalLen = len(collection[collection.keys()[0]])
-=======
     normalLen = len(collection[list(collection.keys())[0]])
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     for num in range(0, normalLen):
         collection[fieldName].append('')
 
@@ -170,13 +147,8 @@ def normalizeType(collection):
                  '.psd' : 'MovingImage', '.txt' : 'Text', '.mp4' : 'MovingImage'}
 
     fileTypeCol = collection['CONTENTdm file name']
-<<<<<<< HEAD
-    colkeys = collection.keys()
-    typeKeys = typeMatch.keys()
-=======
     colkeys = list(collection.keys())
     typeKeys = list(typeMatch.keys())
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     inferedCollectionType = ''
     notStandardized = []
     for num in range(0, len(fileTypeCol)):
@@ -293,11 +265,7 @@ def fixObjectType(collection):
     objectType = collection['Object Type']
     notAvailable = []
     inferedFieldString = ""
-<<<<<<< HEAD
-    colkeys = collection.keys()
-=======
     colkeys = list(collection.keys())
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     for num in range(0, len(objectType)):
         thisObjectType = objectType[num]
         if thisObjectType == "":
@@ -323,11 +291,7 @@ def checkField(collection, fieldName):
     count = 0
     for each in collectionField:
         if each == "":
-<<<<<<< HEAD
-            print count
-=======
             print(count)
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
             return False
         count += 1
     return True
@@ -336,25 +300,15 @@ def checkField(collection, fieldName):
 def reportField(collection, fieldName):
     ok = checkField(collection, fieldName)
     if ok == True:
-<<<<<<< HEAD
-        print bcolors.OKGREEN + fieldName + " was successfully normalized"
-    else:
-        print bcolors.FAIL + fieldName + " normalization failed"
-=======
         print(bcolors.OKGREEN + fieldName + " was successfully normalized")
     else:
         print(bcolors.FAIL + fieldName + " normalization failed")
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 
 
 # given a collection and a filename, writes the collection to the file
 # preserving csv format
 def writeCsv2File(collection, filename):
-<<<<<<< HEAD
-    colkeys = collection.keys()
-=======
     colkeys = list(collection.keys())
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     writeStream = csv.writer(open(filename, 'w'), quoting=csv.QUOTE_MINIMAL, delimiter=',')
     # for num in (1, len(colkeys)):
     #     writeStream.writerow("\t" + colkeys[num])
@@ -370,11 +324,7 @@ def writeCsv2File(collection, filename):
 # for Galloway project only; takes the item id info from the dc.identifier.other field
 # and inserts right after the title in the dc.title field, in parentheses.
 def insertItemIdIntoTitle(collection):
-<<<<<<< HEAD
-    defaultColumnLength = len(collection[collection.keys()[0]])
-=======
     defaultColumnLength = len(collection[list(collection.keys())[0]])
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     for num in range(0, defaultColumnLength):
         titleField = collection['dc.title[]']
         titleItem = titleField[num]
@@ -395,20 +345,12 @@ def insertItemIdIntoTitle(collection):
 # checks and signals in red if the collection contains any fields such that its
 # rows are not of the same length as the other fields'
 def checkColConsistency(collection):
-<<<<<<< HEAD
-    colkeys = collection.keys()
-=======
     colkeys = list(collection.keys())
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     defaultLen = len(collection[colkeys[0]])
     notPrinted = True
     for each in colkeys:
         if (len(collection[each]) != defaultLen and notPrinted):
-<<<<<<< HEAD
-            print bcolors.FAIL + " collection is inconsistent"
-=======
             print(bcolors.FAIL + " collection is inconsistent")
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
             notPrinted = False
     return notPrinted == True
 
@@ -416,11 +358,7 @@ def checkColConsistency(collection):
 # containing a list of itemId,fieldnickname,fieldValue for each of the items and modified
 # fields in the collection.
 def writeModifiedFieldsData(collectionName, collection, fileName):
-<<<<<<< HEAD
-    print bcolors.OKBLUE + "Generating metadata file " + fileName + " ..."
-=======
     print(bcolors.OKBLUE + "Generating metadata file " + fileName + " ...")
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     lookForFields = ['Date-EDTF', 'Type-DCMI', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
     fieldsMetadata = contentdm_api.getCollectionFieldInfo(collectionName)
     fieldsNickNameDict = collections.OrderedDict()
@@ -428,22 +366,14 @@ def writeModifiedFieldsData(collectionName, collection, fileName):
         for field in fieldsMetadata:
             if each == field['name']:
                 fieldsNickNameDict[each] = field['nick']
-<<<<<<< HEAD
-    colkeys = collection.keys()
-=======
     colkeys = list(collection.keys())
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     defaultColumnLength = len(collection[colkeys[0]]) # number of records for that collection
     writeStream = csv.writer(open(fileName, 'w'), quoting=csv.QUOTE_MINIMAL, delimiter=",")
 
     # first, we need to write the header to the file.
     # header = record number, (n1, n2, ...), for n1, n2, ... the modified fields' nicknames
     header = ["record number"]
-<<<<<<< HEAD
-    for fieldnickname in fieldsNickNameDict.values():
-=======
     for fieldnickname in list(fieldsNickNameDict.values()):
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
         header.append(fieldnickname)
     writeStream.writerow(header)
 
@@ -455,11 +385,7 @@ def writeModifiedFieldsData(collectionName, collection, fileName):
             try:
                 line.append(collection[field][num])
             except:
-<<<<<<< HEAD
-                line.append(unicode(collection[field][num], errors='replace'))
-=======
                 line.append(str(collection[field][num], errors='replace'))
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
         writeStream.writerow(line)
 
 # given a collection, an old and a new field name, copies the content from the old field,
@@ -473,7 +399,6 @@ def changeFieldname(collection, old, new):
     del collection[old]
 
 def main():
-<<<<<<< HEAD
 
     mappedDict = dict()
     allColsList = contentdm_api.getCollectionList()
@@ -513,12 +438,10 @@ def main():
                 print bcolors.FAIL + " check manually."
             print "\n"
 
-=======
-    contentdm_api.downloadCollection("loc", "./text")
+    #contentdm_api.downloadCollection("loc", "./text")
     #col = mapDataToCollection("text/loc.txt")
     #fieldsMetadata = contentdm_api.getCollectionFieldInfo("loc")
     #reconstructDesc(col, fieldsMetadata)
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 
     # --------- HERE --------
 

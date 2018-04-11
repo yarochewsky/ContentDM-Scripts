@@ -1,24 +1,9 @@
-# coding:utf-8
-<<<<<<< HEAD
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
-# University of Washington, Special Collections, Spring 2017
-# CONTENTDM MODULE
-
-import requests, urllib, os
-from requests.auth import HTTPBasicAuth
-=======
-# import sys
-# reload(sys)
-# sys.setdefaultencoding("utf-8")
 # University of Washington, Special Collections, Spring 2017
 # CONTENTDM MODULE
 
 import requests, urllib.request, urllib.parse, urllib.error, os
 from requests.auth import HTTPBasicAuth
 import getpass
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 
 # replace api url here
 URL_API_SERVER="http://server16786.contentdm.oclc.org/dmwebservices/index.php?q="
@@ -26,15 +11,7 @@ URL_API_SERVER="http://server16786.contentdm.oclc.org/dmwebservices/index.php?q=
 URL_SITE="https://cdm16786.contentdm.oclc.org/utils/"
 # url to download export file
 SERVER_DOWNLOAD_COLLECTION = "https://server16786.contentdm.oclc.org/cgi-bin/admin/getfile.exe?CISOMODE=1&CISOFILE="
-<<<<<<< HEAD
-# server username
-USERNAME = 
-# server PASSWORD
-PASSWORD =
-=======
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 
-# returns a list of all collections in the server
 def getCollectionList(formatType="json"):
     collectionEndpoint = "dmGetCollectionList"
     fullUrl = (URL_API_SERVER + collectionEndpoint + "/" + formatType)
@@ -88,27 +65,17 @@ def getFile(collectionName, itemId, fileName, pathName):
 def get(endpoint, collectionName, itemId, fileName):
     fullUrl = (URL_SITE + endpoint + "/collection/"
                 + collectionName + "/id/" + str(itemId))
-<<<<<<< HEAD
-    print "Downloading " + fileName + "  ..."
-    r = urllib.urlretrieve(fullUrl, fileName)
-=======
     print("Downloading " + fileName + "  ...")
     r = urllib.request.urlretrieve(fullUrl, fileName)
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 
 # given a collection name, and a directory, downloads the collection original file from
 # the server, and saves it in the directory as a text file with the filename = collection name
 def downloadCollection(collectionName, directory):
-<<<<<<< HEAD
-    r = requests.get(SERVER_DOWNLOAD_COLLECTION + '/' + collectionName +
-                     '/index/description/export.txt', auth=HTTPBasicAuth(USERNAME, PASSWORD))
-=======
     print("The downloadCollection method requires authentication : ")
     username = input("Username: ").strip()
     password = getpass.getpass()
     r = requests.get(SERVER_DOWNLOAD_COLLECTION + '/' + collectionName +
                      '/index/description/export.txt', auth=HTTPBasicAuth(username, password))
->>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
     with open(os.path.join(directory, collectionName + ".txt"), 'w') as output:
         output.write(r.text)
 
