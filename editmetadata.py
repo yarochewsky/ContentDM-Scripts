@@ -11,7 +11,10 @@ import csv, os, shutil
 import xml.etree.ElementTree as ET
 import collections
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 # given the csv reader object, creates and populates a new dictionary
 # containing record numbers as keys, and dictionary of fields as values
 # each of these dictionaries of fields bears the field's nickname as a key,
@@ -41,8 +44,13 @@ def populateMap(reader):
 # given a record name, finds the contentdm cached file for that record,
 # in the current directory, and returns the tree object of that file.
 # Returns None if file does not exist (has not been cached)
+<<<<<<< HEAD
 def findXMLRoot(record):
 	contentdmCachedFilename = record + ".desc"
+=======
+def findXMLRoot(record, cachedDirectory):
+	contentdmCachedFilename = os.path.join(cachedDirectory, record + ".desc")
+>>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 	if (os.path.isfile(contentdmCachedFilename)):
 		xmlTree = ET.parse(contentdmCachedFilename)
 		return xmlTree
@@ -58,6 +66,7 @@ def updateFieldInXML(root, nickname, value):
 		print(" Writing " + nickname + " as " + value)
 		findElement.text = value
 
+<<<<<<< HEAD
 # creates a backup dir to copy over the contentdm cached files .desc
 # to that directory
 def backupCachedFiles():
@@ -99,6 +108,75 @@ def main():
 				prependHeader(record)
 			else:
 				print("Record file " + record + " is not cached or does not exist ...")
+=======
+# given the directory in the current machine where the cached files 
+# are, creates a backup dir to copy over the contentdm cached files .desc
+# to that directory
+def backupCachedFiles(cachedDirectory):
+    print(os.listdir(cachedDirectory))
+    backupPath = os.path.join(cachedDirectory, "backup")
+    if not os.path.exists(backupPath):
+        os.makedirs(backupPath)
+    for eachFile in os.listdir(cachedDirectory):
+        if eachFile.endswith(".desc"):
+            fileFullPath = os.path.join(cachedDirectory, eachFile)
+            print("Copying file : " + eachFile + " to backup directory ...")
+            shutil.copy(fileFullPath, backupPath)
+
+# pre: backup folder has been created in the current working directory
+# copies the .xml metadata files that describe the current state of the 
+# ContentDM project client into the backup folder
+def backupMetadataFiles(cachedDirectory):
+    for eachFile in os.listdir(cachedDirectory):
+        if eachFile.endswith(".xml"):
+            fileFullPath = os.path.join(cachedDirectory, eachFile)
+            print("Copying file : " + eachFile + " to backup directory ...")
+            shutil.copy(fileFullPath, os.path.join(cachedDirectory, "backup"))
+
+# prepend xml declaration header to the file (treat XML as text, not parsed anymore)
+# header is <?xml version="1.0" encoding="utf-8"?>
+def prependHeader(record, cachedDirectory):
+        workingFile = os.path.join(cachedDirectory, record + ".desc")
+        print(" Writing xml header to the file ...")
+        savedFileContents = []
+        with open(workingFile, "r") as cachedFile:
+                savedFileContents = cachedFile.read()
+        with open(workingFile, "w") as cachedFile:
+                cachedFile.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+                cachedFile.write(savedFileContents)
+
+# given the collection name, and project name on ContentDM Project Client, 
+# finds and returns the folder in which the collection is cached in contentdm
+def findCachedDirectory(collectionName, projectName):
+    return (os.path.join(os.path.expanduser('~'), "AppData", "Roaming", "OCLC", "CONTENTdm Project Client", collectionName, projectName))
+ 
+def main():
+    print("SETTINGS: ")
+    collectionName = input("Enter the name of the ContentDM collection: (nickname) ").strip()
+    projectName = input("Enter the name of the project name you used in the Project Client for this collection : ").strip()
+    filename = input("Please, enter the name of the metadata file to be found in this working directory: ").strip()
+    cachedDirectory = findCachedDirectory(collectionName, projectName)
+    backupCachedFiles(cachedDirectory) # backup every cached file before writing anything to the originals
+    backupMetadataFiles(cachedDirectory) # backup the xml metadata files of the project client 
+    with open(filename, 'r') as inputFile:
+            reader = list(csv.reader(inputFile, delimiter=","))
+    recordsDict = populateMap(reader)
+    records = list(recordsDict.keys())
+    
+    for record in records:
+            treeRoot = findXMLRoot(record, cachedDirectory)
+            if (treeRoot != None):
+                recordFields = recordsDict[record]
+                print("Updating record number " + record + " ...")
+                for recordFieldsNickname in list(recordFields.keys()):
+                    filedValueInRecord = recordFields[recordFieldsNickname]
+                    updateFieldInXML(treeRoot, recordFieldsNickname, filedValueInRecord)
+                treeRoot.write(os.path.join(cachedDirectory, record + ".desc"), encoding="utf-8",
+                               xml_declaration=False, method="xml", short_empty_elements=False)
+                prependHeader(record, cachedDirectory)
+            else:
+                print("Record file " + record + " is not cached or does not exist ...")
+>>>>>>> a9253367576903f7ea64d09fb718e239596ba4f3
 
 if __name__ == '__main__':
 	main()
