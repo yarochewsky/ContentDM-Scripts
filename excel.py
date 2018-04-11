@@ -445,49 +445,49 @@ def main():
 
     # --------- HERE --------
 
-    # collectionsAnneWants = []
-    # with open("collections-for-daniel-to-update.txt", 'r') as f:
-    #     for line in f:
-    #         collectionsAnneWants.append(line.strip())
-    #
-    # mappedDict = dict()
-    # allColsList = contentdm_api.getCollectionList()
-    # for each in allColsList:
-    #     alias = each['alias'].split('/')[1]
-    #     name = each['name']
-    #     mappedDict[alias] = name
-    #
-    # requiredFields = ['Date-EDTF', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
-    #
-    # for eachFile in os.listdir("./text"):
-    #     if eachFile.endswith(".txt"):
-    #         colName = eachFile.split('.')[0]
-    #         if mappedDict[colName] in collectionsAnneWants:
-    #             print bcolors.OKBLUE + "Processing " + eachFile + " ..."
-    #             fullFileName = os.path.join("./text", eachFile)
-    #             col = mapDataToCollection(fullFileName)
-    #             consistent = checkColConsistency(col)
-    #             if consistent:
-    #                 colkeys = col.keys()
-    #                 for each in requiredFields:
-    #                     if each not in colkeys:
-    #                         addFieldToCol(col, each)
-    #                 if 'Type' in colkeys:
-    #                     changeFieldname(col, 'Type', 'Type-DCMI')
-    #                 else:
-    #                     addFieldToCol(col, 'Type-DCMI')
-    #
-    #                 normalizeType(col)
-    #                 fixObjectType(col)
-    #                 fixRestrictions(col)
-    #                 fixDigitalCollection(col, mappedDict[alias])
-    #                 fixRightsURI(col)
-    #                 exportFileName = eachFile.split(".")[0] + ".csv"
-    #                 writeCsv2File(col, os.path.join("export-csv/", exportFileName))
-    #                 writeModifiedFieldsData(colName, col, os.path.join("export-csv/", colName + "-csvMetadata.csv"))
-    #             else:
-    #                 print bcolors.FAIL + " check manually."
-    #             print "\n"
+    collectionsAnneWants = []
+    with open("collections-for-daniel-to-update.txt", 'r') as f:
+        for line in f:
+            collectionsAnneWants.append(line.strip())
+
+    mappedDict = dict()
+    allColsList = contentdm_api.getCollectionList()
+    for each in allColsList:
+        alias = each['alias'].split('/')[1]
+        name = each['name']
+        mappedDict[alias] = name
+
+    requiredFields = ['Date-EDTF', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
+
+    for eachFile in os.listdir("./text"):
+        if eachFile.endswith(".txt"):
+            colName = eachFile.split('.')[0]
+            if mappedDict[colName] in collectionsAnneWants:
+                print bcolors.OKBLUE + "Processing " + eachFile + " ..."
+                fullFileName = os.path.join("./text", eachFile)
+                col = mapDataToCollection(fullFileName)
+                consistent = checkColConsistency(col)
+                if consistent:
+                    colkeys = col.keys()
+                    for each in requiredFields:
+                        if each not in colkeys:
+                            addFieldToCol(col, each)
+                    if 'Type' in colkeys:
+                        changeFieldname(col, 'Type', 'Type-DCMI')
+                    else:
+                        addFieldToCol(col, 'Type-DCMI')
+
+                    normalizeType(col)
+                    fixObjectType(col)
+                    fixRestrictions(col)
+                    fixDigitalCollection(col, mappedDict[alias])
+                    fixRightsURI(col)
+                    exportFileName = eachFile.split(".")[0] + ".csv"
+                    writeCsv2File(col, os.path.join("export-csv/", exportFileName))
+                    writeModifiedFieldsData(colName, col, os.path.join("export-csv/", colName + "-csvMetadata.csv"))
+                else:
+                    print bcolors.FAIL + " check manually."
+                print "\n"
 
 if __name__ == '__main__':
     main()
