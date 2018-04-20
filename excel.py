@@ -400,43 +400,43 @@ def changeFieldname(collection, old, new):
 
 def main():
 
-    mappedDict = dict()
-    allColsList = contentdm_api.getCollectionList()
-    for each in allColsList:
-        alias = each['alias'].split('/')[1]
-        name = each['name']
-        mappedDict[alias] = name
-
-    requiredFields = ['Date-EDTF', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
-
-    for eachFile in os.listdir("./text"):
-        if eachFile.endswith(".txt"):
-            colName = eachFile.split('.')[0]
-            print bcolors.OKBLUE + "Processing " + eachFile + " ..."
-            fullFileName = os.path.join("./text", eachFile)
-            col = mapDataToCollection(fullFileName)
-            consistent = checkColConsistency(col)
-            if consistent:
-                colkeys = col.keys()
-                for each in requiredFields:
-                    if each not in colkeys:
-                        addFieldToCol(col, each)
-                if 'Type' in colkeys:
-                    changeFieldname(col, 'Type', 'Type-DCMI')
-                else:
-                    addFieldToCol(col, 'Type-DCMI')
-
-                normalizeType(col)
-                fixObjectType(col)
-                fixRestrictions(col)
-                fixDigitalCollection(col, mappedDict[alias])
-                fixRightsURI(col)
-                exportFileName = eachFile.split(".")[0] + ".csv"
-                writeCsv2File(col, os.path.join("export-csv/", exportFileName))
-                writeModifiedFieldsData(colName, col, os.path.join("export-csv/", colName + "-csvMetadata.csv"))
-            else:
-                print bcolors.FAIL + " check manually."
-            print "\n"
+    # mappedDict = dict()
+    # allColsList = contentdm_api.getCollectionList()
+    # for each in allColsList:
+    #     alias = each['alias'].split('/')[1]
+    #     name = each['name']
+    #     mappedDict[alias] = name
+    #
+    # requiredFields = ['Date-EDTF', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
+    #
+    # for eachFile in os.listdir("./text"):
+    #     if eachFile.endswith(".txt"):
+    #         colName = eachFile.split('.')[0]
+    #         print bcolors.OKBLUE + "Processing " + eachFile + " ..."
+    #         fullFileName = os.path.join("./text", eachFile)
+    #         col = mapDataToCollection(fullFileName)
+    #         consistent = checkColConsistency(col)
+    #         if consistent:
+    #             colkeys = col.keys()
+    #             for each in requiredFields:
+    #                 if each not in colkeys:
+    #                     addFieldToCol(col, each)
+    #             if 'Type' in colkeys:
+    #                 changeFieldname(col, 'Type', 'Type-DCMI')
+    #             else:
+    #                 addFieldToCol(col, 'Type-DCMI')
+    #
+    #             normalizeType(col)
+    #             fixObjectType(col)
+    #             fixRestrictions(col)
+    #             fixDigitalCollection(col, mappedDict[alias])
+    #             fixRightsURI(col)
+    #             exportFileName = eachFile.split(".")[0] + ".csv"
+    #             writeCsv2File(col, os.path.join("export-csv/", exportFileName))
+    #             writeModifiedFieldsData(colName, col, os.path.join("export-csv/", colName + "-csvMetadata.csv"))
+    #         else:
+    #             print bcolors.FAIL + " check manually."
+    #         print "\n"
 
     #contentdm_api.downloadCollection("loc", "./text")
     #col = mapDataToCollection("text/loc.txt")
@@ -459,7 +459,7 @@ def main():
 
     requiredFields = ['Date-EDTF', 'Object Type', 'Restrictions', 'Rights URI', 'Digital Collection']
 
-    for eachFile in os.listdir("./text"):
+    for eachFile in os.listdir("../final-text"):
         if eachFile.endswith(".txt"):
             colName = eachFile.split('.')[0]
             if mappedDict[colName] in collectionsAnneWants:
@@ -483,8 +483,8 @@ def main():
                     fixDigitalCollection(col, mappedDict[alias])
                     fixRightsURI(col)
                     exportFileName = eachFile.split(".")[0] + ".csv"
-                    writeCsv2File(col, os.path.join("export-csv/", exportFileName))
-                    writeModifiedFieldsData(colName, col, os.path.join("export-csv/", colName + "-csvMetadata.csv"))
+                    writeCsv2File(col, os.path.join("../export-csv/", exportFileName))
+                    writeModifiedFieldsData(colName, col, os.path.join("../export-csv/", colName + "-csvMetadata.csv"))
                 else:
                     print bcolors.FAIL + " check manually."
                 print "\n"
